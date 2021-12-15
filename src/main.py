@@ -1,7 +1,7 @@
 import cv2
 from ai_detection import start_detection
 from temp_data import data_ready
-from temp_arduino import Arduino
+from arduino_uno import Arduino
 import os
 
 

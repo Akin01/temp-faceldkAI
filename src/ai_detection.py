@@ -3,8 +3,7 @@ import mediapipe as mp
 import time
 from draw import Draw
 import draw
-from post_temp import postTemp
-from temp_data import data_ready
+from temp_data import post_data, data_ready
 
 # Use Method for face detection from mediapipe
 mp_face_detection = mp.solutions.face_detection
@@ -62,13 +61,15 @@ def start_detection(cap, window_title: str = None, temp_data: float = None):
                    draw.TEXT_WEIGHT_MEDIUM,
                    draw.COLOR_BLUE)
 
+            d.Rect((190, -295), (365, -260), draw.COLOR_BLACK, draw.THICK_WEIGHT_FILLED)
+
             d.Text("Face Detected",
-                   150,
-                   -250,
-                   draw.SERIF_NORMAL,
+                   200,
+                   -270,
+                   draw.SANS_SERIF_NORMAL,
                    draw.TEXT_SIZE_SMALL,
                    draw.TEXT_WEIGHT_REGULAR,
-                   draw.COLOR_GREEN)
+                   draw.COLOR_WHITE)
 
             d.Circle(-33, 60, 2, draw.COLOR_BLACK, draw.THICK_WEIGHT_MEDIUM)
             for detection in face_results.detections:
@@ -106,13 +107,17 @@ def start_detection(cap, window_title: str = None, temp_data: float = None):
 
         previous_time = current_time
 
+        d.Rect((-200, -300), (-90, -255), draw.COLOR_BLUE, draw.THICK_WEIGHT_FILLED)
+
+        fps_color = draw.COLOR_RED if fps < 20 else (draw.COLOR_YELLOW if fps < 35 else draw.COLOR_GREEN)
+
         d.Text(f"{fps} fps",
-               -200,
+               -180,
                -270,
                draw.SANS_SERIF_NORMAL,
-               draw.TEXT_SIZE_REGULAR,
+               draw.TEXT_SIZE_SMALL,
                draw.TEXT_WEIGHT_REGULAR,
-               draw.COLOR_PURPLE)
+               fps_color)
 
         # Show Video and set title
         cv2.imshow(window_title, image)

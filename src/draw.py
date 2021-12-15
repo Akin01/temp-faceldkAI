@@ -43,6 +43,7 @@ TEXT_SIZE_MEDIUM = 1.5
 TEXT_SIZE_LARGE = 2
 
 # Font weight options
+THICK_WEIGHT_FILLED = -1
 THICK_WEIGHT_REGULAR = 1
 THICK_WEIGHT_MEDIUM = 2
 THICK_WEIGHT_HARD = 3
@@ -64,7 +65,6 @@ class Draw:
              font_size: float = TEXT_SIZE_NORMAL,
              font_weight: int = TEXT_WEIGHT_MEDIUM,
              color: tuple = COLOR_BLACK):
-
         return cv2.putText(self.canvas,
                            text,
                            (self.x_center + x, self.y_center + y),
@@ -78,14 +78,22 @@ class Draw:
                y: int = 0,
                rad: int = 2,
                color: tuple = COLOR_BLACK,
-               thick: int =THICK_WEIGHT_MEDIUM
+               thick: int = THICK_WEIGHT_MEDIUM
                ):
-
         return cv2.circle(self.canvas,
                           (self.x_center + x, self.y_center + y),
                           rad,
                           color,
                           thick)
 
-
-
+    def Rect(self,
+             p1: tuple = (0, 0),
+             p2: tuple = (0, 0),
+             color: tuple = COLOR_BLACK,
+             thick: int = THICK_WEIGHT_MEDIUM
+             ):
+        return cv2.rectangle(self.canvas,
+                             (self.x_center + p1[0], self.y_center + p1[1]),
+                             (self.x_center + p2[0], self.y_center + p2[1]),
+                             color,
+                             thick)
