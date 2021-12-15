@@ -4,6 +4,7 @@ import time
 from draw import Draw
 import draw
 from temp_data import post_data, data_ready
+import random
 
 # Use Method for face detection from mediapipe
 mp_face_detection = mp.solutions.face_detection
@@ -53,15 +54,46 @@ def start_detection(cap, window_title: str = None, temp_data: float = None):
         if face_results.detections:
             temp_alert = "Data not found" if temp_data else temp_data
 
-            d.Text(temp_alert,
-                   50,
-                   70,
+            d.Rect((-210, -160), (-100, -70), draw.COLOR_NAVY, draw.THICK_WEIGHT_FILLED)
+            d.Rect((-210, -210), (-100, -160), draw.COLOR_BLACK, draw.THICK_WEIGHT_FILLED)
+
+            d.Rect((-210, -10), (-100, 80), draw.COLOR_NAVY, draw.THICK_WEIGHT_FILLED)
+            d.Rect((-210, -60), (-100, -10), draw.COLOR_BLACK, draw.THICK_WEIGHT_FILLED)
+
+            d.Text("Suhu Tubuh",
+                   -200,
+                   -180,
+                   draw.SERIF_SMALL,
+                   draw.TEXT_SIZE_SMALL - 0.15,
+                   draw.TEXT_WEIGHT_REGULAR,
+                   draw.COLOR_WHITE)
+
+            d.Text("Suhu Lingk.",
+                   -200,
+                   -30,
+                   draw.SERIF_SMALL,
+                   draw.TEXT_SIZE_SMALL - 0.15,
+                   draw.TEXT_WEIGHT_REGULAR,
+                   draw.COLOR_WHITE)
+
+            d.Text(str(round(random.uniform(0, 40), 1)),
+                   -200,
+                   -105,
                    draw.SANS_SERIF_NORMAL,
                    draw.TEXT_SIZE_NORMAL,
                    draw.TEXT_WEIGHT_MEDIUM,
-                   draw.COLOR_BLUE)
+                   draw.COLOR_WHITE)
+
+            d.Text(str(round(random.uniform(0, 40), 1)),
+                   -200,
+                   45,
+                   draw.SANS_SERIF_NORMAL,
+                   draw.TEXT_SIZE_NORMAL,
+                   draw.TEXT_WEIGHT_MEDIUM,
+                   draw.COLOR_WHITE)
 
             d.Rect((190, -295), (365, -260), draw.COLOR_BLACK, draw.THICK_WEIGHT_FILLED)
+            d.Rect((190, -295), (365, -260), draw.COLOR_DARK_SLATE_GRAY, draw.THICK_WEIGHT_REGULAR)
 
             d.Text("Face Detected",
                    200,
@@ -107,12 +139,13 @@ def start_detection(cap, window_title: str = None, temp_data: float = None):
 
         previous_time = current_time
 
-        d.Rect((-200, -300), (-90, -255), draw.COLOR_BLUE, draw.THICK_WEIGHT_FILLED)
+        d.Rect((-210, -300), (-100, -255), draw.COLOR_MIDNIGHT_BLUE, draw.THICK_WEIGHT_FILLED)
+        d.Rect((-210, -300), (-100, -255), draw.COLOR_BLUE, draw.THICK_WEIGHT_REGULAR)
 
         fps_color = draw.COLOR_RED if fps < 20 else (draw.COLOR_YELLOW if fps < 35 else draw.COLOR_GREEN)
 
         d.Text(f"{fps} fps",
-               -180,
+               -190,
                -270,
                draw.SANS_SERIF_NORMAL,
                draw.TEXT_SIZE_SMALL,
