@@ -1,12 +1,14 @@
 import cv2
 import mediapipe as mp
-import time
-from .draw import Draw
-from . import draw
-from .temp_data import post_data, data_ready
-from arduino_uno import Arduino
+
 from dotenv import load_dotenv
 import os
+import time
+
+from draw import Draw
+import draw
+from temp_data import post_data, data_ready
+from arduino_uno import Arduino
 
 load_dotenv()
 
