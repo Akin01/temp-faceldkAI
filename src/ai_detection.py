@@ -4,7 +4,15 @@ import time
 from .draw import Draw
 from . import draw
 from .temp_data import post_data, data_ready
-import random
+from arduino_uno import Arduino
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+# Arduino configuration
+port = os.getenv("PORT")
+bauderate = os.getenv("BAUDERATE")
 
 # Use Method for face detection from mediapipe
 mp_face_detection = mp.solutions.face_detection
@@ -18,7 +26,14 @@ hands = mp_hands.Hands()
 mp_drawing = mp.solutions.drawing_utils
 
 
-def start_detection(cap, window_title: str = None, temp_data: float = None):
+def get_temp_data():
+    ard = Arduino(port, bauderate)
+    temp_data = ard.get_temp("#")
+    ard.close_serial()
+    return temp_data
+
+
+def start_detection(cap, window_title: str = None):
     # Time Initialization for calculate FPS
     previous_time = 0
 
@@ -52,7 +67,7 @@ def start_detection(cap, window_title: str = None, temp_data: float = None):
         d = Draw(image)
 
         if face_results.detections:
-            temp_alert = "Data not found" if temp_data else temp_data
+            temp_alert = "Data not found" if get_temp_data() else get_temp_data()
 
             # Body temperature box
             d.Rect((-210, -160), (-100, -90), draw.COLOR_NAVY, draw.THICK_WEIGHT_FILLED)
@@ -68,7 +83,7 @@ def start_detection(cap, window_title: str = None, temp_data: float = None):
                    draw.COLOR_WHITE)
 
             # Body temperature data in realtime display
-            d.Text(f"{round(random.uniform(10, 40), 1)}  C",
+            d.Text(f"{temp_alert[0]}  C",
                    -200,
                    -120,
                    draw.SANS_SERIF_NORMAL,
@@ -93,7 +108,7 @@ def start_detection(cap, window_title: str = None, temp_data: float = None):
                    draw.COLOR_WHITE)
 
             # Environment temperature data in realtime display
-            d.Text(f"{round(random.uniform(10, 40), 1)}  C",
+            d.Text(f"{temp_alert[1]}  C",
                    -200,
                    30,
                    draw.SANS_SERIF_NORMAL,
@@ -130,18 +145,19 @@ def start_detection(cap, window_title: str = None, temp_data: float = None):
                         d.Circle(xHand - int(h / 2), yHand - int(w / 2), 10, draw.COLOR_BLACK, draw.THICK_WEIGHT_BOLD)
 
                         if (518 > xHand > 460) and (405 > yHand > 350):
-                            # post_data_ready = data_ready(temp_data)
-                            #
-                            # res_post_status = postTemp(post_data_ready)
+                            temp_body, temp_env = get_temp_data()
+                            post_data_ready = data_ready(temp_body, temp_env)
 
-                            # if res_post_status.status_code == 201:
-                            d.Text("Data has recorded",
-                                   -100,
-                                   100,
-                                   draw.SANS_SERIF_SMALL,
-                                   draw.TEXT_SIZE_NORMAL,
-                                   draw.TEXT_WEIGHT_MEDIUM,
-                                   draw.COLOR_YELLOW)
+                            res_post_status = post_data(post_data_ready)
+
+                            if res_post_status.status_code == 201:
+                                d.Text("Data has recorded",
+                                       -100,
+                                       100,
+                                       draw.SANS_SERIF_SMALL,
+                                       draw.TEXT_SIZE_NORMAL,
+                                       draw.TEXT_WEIGHT_MEDIUM,
+                                       draw.COLOR_YELLOW)
 
                 mp_drawing.draw_landmarks(image, hand_ldk, mp_hands.HAND_CONNECTIONS)
 
