@@ -1,9 +1,9 @@
 import cv2
 import mediapipe as mp
 import time
-from draw import Draw
-import draw
-from temp_data import post_data, data_ready
+from .draw import Draw
+from . import draw
+from .temp_data import post_data, data_ready
 import random
 
 # Use Method for face detection from mediapipe
@@ -54,12 +54,11 @@ def start_detection(cap, window_title: str = None, temp_data: float = None):
         if face_results.detections:
             temp_alert = "Data not found" if temp_data else temp_data
 
-            d.Rect((-210, -160), (-100, -70), draw.COLOR_NAVY, draw.THICK_WEIGHT_FILLED)
+            # Body temperature box
+            d.Rect((-210, -160), (-100, -90), draw.COLOR_NAVY, draw.THICK_WEIGHT_FILLED)
             d.Rect((-210, -210), (-100, -160), draw.COLOR_BLACK, draw.THICK_WEIGHT_FILLED)
 
-            d.Rect((-210, -10), (-100, 80), draw.COLOR_NAVY, draw.THICK_WEIGHT_FILLED)
-            d.Rect((-210, -60), (-100, -10), draw.COLOR_BLACK, draw.THICK_WEIGHT_FILLED)
-
+            # Body temperature title box
             d.Text("Suhu Tubuh",
                    -200,
                    -180,
@@ -68,6 +67,23 @@ def start_detection(cap, window_title: str = None, temp_data: float = None):
                    draw.TEXT_WEIGHT_REGULAR,
                    draw.COLOR_WHITE)
 
+            # Body temperature data in realtime display
+            d.Text(f"{round(random.uniform(10, 40), 1)}  C",
+                   -200,
+                   -120,
+                   draw.SANS_SERIF_NORMAL,
+                   draw.TEXT_SIZE_SMALL,
+                   draw.TEXT_WEIGHT_MEDIUM,
+                   draw.COLOR_WHITE)
+
+            # Body temperature degree symbol
+            d.Circle(-135, -135, 3, draw.COLOR_WHITE, draw.THICK_WEIGHT_MEDIUM)
+
+            # Environment temperature box
+            d.Rect((-210, -10), (-100, 60), draw.COLOR_NAVY, draw.THICK_WEIGHT_FILLED)
+            d.Rect((-210, -60), (-100, -10), draw.COLOR_BLACK, draw.THICK_WEIGHT_FILLED)
+
+            # Environment temperature title box
             d.Text("Suhu Lingk.",
                    -200,
                    -30,
@@ -76,25 +92,23 @@ def start_detection(cap, window_title: str = None, temp_data: float = None):
                    draw.TEXT_WEIGHT_REGULAR,
                    draw.COLOR_WHITE)
 
-            d.Text(str(round(random.uniform(0, 40), 1)),
+            # Environment temperature data in realtime display
+            d.Text(f"{round(random.uniform(10, 40), 1)}  C",
                    -200,
-                   -105,
+                   30,
                    draw.SANS_SERIF_NORMAL,
-                   draw.TEXT_SIZE_NORMAL,
+                   draw.TEXT_SIZE_SMALL,
                    draw.TEXT_WEIGHT_MEDIUM,
                    draw.COLOR_WHITE)
 
-            d.Text(str(round(random.uniform(0, 40), 1)),
-                   -200,
-                   45,
-                   draw.SANS_SERIF_NORMAL,
-                   draw.TEXT_SIZE_NORMAL,
-                   draw.TEXT_WEIGHT_MEDIUM,
-                   draw.COLOR_WHITE)
+            # Environment temperature degree symbol
+            d.Circle(-135, 15, 3, draw.COLOR_WHITE, draw.THICK_WEIGHT_MEDIUM)
 
+            # Face detected alert box
             d.Rect((190, -295), (365, -260), draw.COLOR_BLACK, draw.THICK_WEIGHT_FILLED)
             d.Rect((190, -295), (365, -260), draw.COLOR_DARK_SLATE_GRAY, draw.THICK_WEIGHT_REGULAR)
 
+            # Face detected alert display
             d.Text("Face Detected",
                    200,
                    -270,
@@ -103,7 +117,6 @@ def start_detection(cap, window_title: str = None, temp_data: float = None):
                    draw.TEXT_WEIGHT_REGULAR,
                    draw.COLOR_WHITE)
 
-            d.Circle(-33, 60, 2, draw.COLOR_BLACK, draw.THICK_WEIGHT_MEDIUM)
             for detection in face_results.detections:
                 mp_drawing.draw_detection(image, detection)
 
@@ -116,20 +129,19 @@ def start_detection(cap, window_title: str = None, temp_data: float = None):
                     if (idx % 4 == 0) and (idx != 0):
                         d.Circle(xHand - int(h / 2), yHand - int(w / 2), 10, draw.COLOR_BLACK, draw.THICK_WEIGHT_BOLD)
 
-                        # if (518 > xHand > 460) and (405 > yHand > 350):
-                        #
-                        #     post_data_ready = data_ready(temp_data)
-                        #
-                        #     res_post_status = postTemp(post_data_ready)
-                        #
-                        #     if res_post_status.status_code == 201:
-                        #         d.Text("Data has recorded",
-                        #                -100,
-                        #                170,
-                        #                draw.SANS_SERIF_SMALL,
-                        #                draw.TEXT_SIZE_NORMAL,
-                        #                draw.COLOR_YELLOW,
-                        #                draw.TEXT_WEIGHT_MEDIUM)
+                        if (518 > xHand > 460) and (405 > yHand > 350):
+                            # post_data_ready = data_ready(temp_data)
+                            #
+                            # res_post_status = postTemp(post_data_ready)
+
+                            # if res_post_status.status_code == 201:
+                            d.Text("Data has recorded",
+                                   -100,
+                                   100,
+                                   draw.SANS_SERIF_SMALL,
+                                   draw.TEXT_SIZE_NORMAL,
+                                   draw.TEXT_WEIGHT_MEDIUM,
+                                   draw.COLOR_YELLOW)
 
                 mp_drawing.draw_landmarks(image, hand_ldk, mp_hands.HAND_CONNECTIONS)
 
@@ -139,11 +151,13 @@ def start_detection(cap, window_title: str = None, temp_data: float = None):
 
         previous_time = current_time
 
+        # FPS value box
         d.Rect((-210, -300), (-100, -255), draw.COLOR_MIDNIGHT_BLUE, draw.THICK_WEIGHT_FILLED)
         d.Rect((-210, -300), (-100, -255), draw.COLOR_BLUE, draw.THICK_WEIGHT_REGULAR)
 
         fps_color = draw.COLOR_RED if fps < 20 else (draw.COLOR_YELLOW if fps < 35 else draw.COLOR_GREEN)
 
+        # FPS value display in realtime
         d.Text(f"{fps} fps",
                -190,
                -270,

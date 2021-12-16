@@ -1,5 +1,8 @@
 import requests
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 url = os.getenv('URL')
 
@@ -16,5 +19,4 @@ def data_ready(temp_obj: float = None, temp_env: float = None) -> dict:
             "env": temp_env
         }
     }
-
     return data
