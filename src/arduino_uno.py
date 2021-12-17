@@ -11,7 +11,7 @@ class Arduino:
         arduino_data = self.arduino.readline()
 
         if sep:
-            temp = str(arduino_data[:len(arduino_data)].decode("utf-8")).split(sep)
+            temp = arduino_data.decode("utf-8").split(sep)
             return tuple(map(float, temp))
 
         temp = str(arduino_data[:len(arduino_data) - 1].decode("utf-8"))

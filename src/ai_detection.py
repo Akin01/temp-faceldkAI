@@ -5,10 +5,10 @@ from dotenv import load_dotenv
 import os
 import time
 
-from draw import Draw
-import draw
-from temp_data import post_data, data_ready
-from arduino_uno import Arduino
+from .draw import Draw
+from . import draw
+from .temp_data import post_data, data_ready
+from .arduino_uno import Arduino
 
 load_dotenv()
 
@@ -69,7 +69,7 @@ def start_detection(cap, window_title: str = None):
         d = Draw(image)
 
         if face_results.detections:
-            temp_alert = "Data not found" if get_temp_data() else get_temp_data()
+            temp_alert = get_temp_data()
 
             # Body temperature box
             d.Rect((-210, -160), (-100, -90), draw.COLOR_NAVY, draw.THICK_WEIGHT_FILLED)
@@ -85,7 +85,7 @@ def start_detection(cap, window_title: str = None):
                    draw.COLOR_WHITE)
 
             # Body temperature data in realtime display
-            d.Text(f"{temp_alert[0]}  C",
+            d.Text(f"{round(temp_alert[0], 1)}  C",
                    -200,
                    -120,
                    draw.SANS_SERIF_NORMAL,
@@ -110,7 +110,7 @@ def start_detection(cap, window_title: str = None):
                    draw.COLOR_WHITE)
 
             # Environment temperature data in realtime display
-            d.Text(f"{temp_alert[1]}  C",
+            d.Text(f"{round(temp_alert[1], 1)}  C",
                    -200,
                    30,
                    draw.SANS_SERIF_NORMAL,
